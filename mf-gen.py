@@ -6,7 +6,7 @@
 #    By: agissing <agissing@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/10 18:01:56 by agissing          #+#    #+#              #
-#    Updated: 2018/11/10 18:35:52 by agissing         ###   ########.fr        #
+#    Updated: 2018/11/10 19:09:15 by agissing         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,7 +53,8 @@ header = '''# ******************************************************************
 # **************************************************************************** #
 '''
 
-text = header.format(user, mail, ft_putspc(user + mail), date, ft_putspc(date)) + '''
+text = header.format(user, mail, ft_putspc(user + mail),
+                     date, ft_putspc(date)) + '''
 NAME = {0}
 
 IDIR = {1}
@@ -89,4 +90,5 @@ re: clean all'''.format(prog, inc, dir, files)
 
 makefile.write(text)
 
-sys.exit("All done !")
+if (c == 1):
+    print ("All done !")
