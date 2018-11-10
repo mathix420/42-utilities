@@ -13,9 +13,15 @@ alias mf-gen="python3 ~/Utilities/mf-gen.py"
 ```
 ### Usage
 
-Just execute this command and follow instructions `mf-gen`.
+Just execute this command in your project folder and follow instructions `mf-gen`.
 
 Or execute this single line command : 
 ```bash
 mf-gen <executable_and_header_name> <srcs_folder> <header_folder>
 ```
+## proto-list
+List all prototypes with the given number of tabs
+
+### Usage
+
+Just execute this command in your srcs folder and follow instructions `python3 proto-list.py`.
