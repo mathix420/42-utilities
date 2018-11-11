@@ -6,7 +6,7 @@
 #    By: agissing <agissing@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/10 18:01:56 by agissing          #+#    #+#              #
-#    Updated: 2018/11/10 19:09:15 by agissing         ###   ########.fr        #
+#    Updated: 2018/11/11 11:13:42 by agissing         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,6 @@ elif (c == 4):
 else:
     sys.exit("Bad arguments !")
     
-
 makefile = open('Makefile', 'w+')
 
 try:
