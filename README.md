@@ -1,27 +1,27 @@
 # 42-utilities
-Some 42 utilities
+Simple tools to help your daily coding routine!
 
 ## mf-gen
-Simple utility to generate Makefiles
+Generates Makefiles.
 ### Installation
 
-Simply get the file `mf-gen.py` and put it into a folder for example `~/Utilities/mf-gen.py`.
+Get the file `mf-gen.py` and put it into a folder (eg. `~/42-utilities/mf-gen.py`).
 
-Then add an alias to `.zshrc` or `.shrc` to use mf-gen anywhere.
+Then add an alias to `.zshrc` or `.shrc` to use *mf-gen* anywhere.
 ```bash
 alias mf-gen="python3 ~/Utilities/mf-gen.py"
 ```
 ### Usage
 
-Just execute this command in your project folder and follow instructions `mf-gen`.
+If you added the alias, run `mf-gen` in your project folder.
 
-Or execute this single line command : 
+Or run this single line command: 
 ```bash
 mf-gen <executable_and_header_name> <srcs_folder> <header_folder>
 ```
 ## proto-list
-List all prototypes with the given number of tabs
+Lists all function prototypes (with how many tabs you want) to easily add them to your header file.
 
 ### Usage
 
-Just execute this command in your srcs folder and follow instructions `python3 proto-list.py`.
+Run in your sources folder: `python3 proto-list.py`.
