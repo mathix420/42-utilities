@@ -7,7 +7,7 @@ Generates Makefiles.
 
 Get the file `mf-gen.py` and put it into a folder (eg. `~/42-utilities/mf-gen.py`).
 
-Then add an alias to `.zshrc` or `.shrc` to use *mf-gen* anywhere.
+Then add an alias to `.zshrc` or `.shrc` to use *mf-gen* anywhere:
 ```bash
 alias mf-gen="python3 ~/Utilities/mf-gen.py"
 ```
