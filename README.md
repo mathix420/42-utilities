@@ -2,7 +2,7 @@
 Simple tools to help your daily coding routine!
 ### Installation
 ```bash
-git clone https://github.com/mathix420/42-utilities.git ~/42-utilities
+git clone https://github.com/mathix420/42-utilities.git ~/42-utilities && sh ~/42-utilities/install.sh
 ```
 
 ## mf-gen
