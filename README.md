@@ -8,7 +8,7 @@ git clone https://github.com/mathix420/42-utilities.git ~/42-utilities && sh ~/4
 ## mf-gen
 Generates Makefiles for you.
 ### Alias
-An alias is added to `.zshrc` to use **mf-gen** anywhere:
+An alias is added to `shell rc` to use **mf-gen** anywhere:
 ```bash
 alias mf-gen="python3 ~/42-utilities/mf-gen.py"
 ```
@@ -22,7 +22,7 @@ mf-gen <executable_and_header_name> <sources_folder> <header_folder>
 ## proto-list
 Lists all function prototypes (with how many tabs you want) so you can easily add them to your header file.
 ### Alias
-An alias is added to `.zshrc` to use **proto-list** anywhere:
+An alias is added to your `shell rc` to use **proto-list** anywhere:
 ```bash
 alias proto-list="python3 ~/42-utilities/proto-list.py"
 ```
