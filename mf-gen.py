@@ -6,7 +6,7 @@
 #    By: agissing <agissing@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/10 18:01:56 by agissing          #+#    #+#              #
-#    Updated: 2018/11/11 11:13:42 by agissing         ###   ########.fr        #
+#    Updated: 2018/11/15 11:58:17 by agissing         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -87,7 +87,10 @@ fclean: clean
 
 re: clean all'''.format(prog, inc, dir, files)
 
-makefile.write(text)
+model = open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'MakeDepend'), 'r')
+
+makefile.write(model.read().format(user, mail, ft_putspc(user + mail),
+                     date, ft_putspc(date), prog, inc, dir, files))
 
 if (c == 1):
     print ("All done !")
