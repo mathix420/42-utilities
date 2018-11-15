@@ -22,7 +22,7 @@ SDIR = {7}
 _SRC = {8}
 SRC = $(patsubst %,$(SDIR)/%,$(_SRC))
 
-OBJ = $(_SRC:.c=.o)
+OBJ = $(SRC:.c=.o)
 
 ################################################################################
 #####                           COMPILER OPTIONS                           #####
@@ -36,15 +36,13 @@ OPTS = -o $(NAME) -I$(INC)
 #####                            MAKEFILE RULES                            #####
 ################################################################################
 
-.PHONY: all clean fclean re depend
+.PHONY: all clean fclean re
 
 all: $(NAME)
 
 $(NAME):	$(OBJ)
-		@$(CC) $(FLAGS) $(OPTS) $(SRC)
-
-$(OBJ):	$(SRC)
-		@$(CC) -c -I$(INC) $(SRC)
+		@$(CC) $(FLAGS) $(SRC) $(OPTS)
+		@echo "All compiled !"
 
 clean:
 		@/bin/rm -f $(OBJ)
