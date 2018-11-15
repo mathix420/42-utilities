@@ -8,7 +8,7 @@ git clone https://github.com/mathix420/42-utilities.git ~/42-utilities && sh ~/4
 ## mf-gen
 Generates Makefiles for you.
 ### Alias
-An alias is added to `shell rc` to use **mf-gen** anywhere:
+An alias is added to your `shell rc` to use **mf-gen** anywhere:
 ```bash
 alias mf-gen="python3 ~/42-utilities/mf-gen.py"
 ```
