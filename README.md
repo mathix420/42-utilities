@@ -29,8 +29,6 @@ alias proto-list="python3 ~/42-utilities/proto-list.py"
 ### Usage
 Run `proto-list` in your sources folder.
 
-# Contributors
-### agissing
-[GitHub](https://github.com/mathix420)
-### flklein
-[GitHub](https://github.com/floklein)
+## Contributors
+**agissing** [GitHub](https://github.com/mathix420)
+**flklein** [GitHub](https://github.com/floklein)
