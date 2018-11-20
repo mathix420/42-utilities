@@ -29,8 +29,8 @@ OBJ = $(SRC:.c=.o)
 ################################################################################
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
-OPTS = -o $(NAME) -I$(INC)
+FLAGS = -Wall -Wextra -Werror
+OPTS = -I$(INC)
 
 ################################################################################
 #####                            MAKEFILE RULES                            #####
@@ -40,16 +40,18 @@ OPTS = -o $(NAME) -I$(INC)
 
 all: $(NAME)
 
-$(NAME):	$(OBJ)
-		@$(CC) $(OBJ) $(OPTS)
-		@echo "Compilation done!"
+$(NAME):		$(OBJ)
+		@$(CC) $(FLAGS) $(SRC) $(OPTS)
+		@ar -rv $(NAME) $(OBJ)
+		@ranlib $(NAME)
+		@echo "All compiled !"
 
 clean:
 		@/bin/rm -f $(OBJ)
-		@echo "*.o cleaned!"
+		@echo "*.o cleaned !"
 
 fclean: clean
 		@/bin/rm -f $(NAME)
-		@echo "Cleaning done!"
+		@echo "All cleaned !"
 
 re: clean all
