@@ -6,7 +6,7 @@ LCY='\033[1;36m'
 NC='\033[0m'
 if [ -z "$1" ] || [ -z "$2" ]
 then
-	echo "${RED}✗ ${NC}usage: ./proto-list <sources folder> <number of tabs> [mode { | display}]"
+	echo "${RED}✗ ${NC}usage: proto-list <sources folder> <number of tabs> [mode { | display}]"
 	exit 1
 fi
 let "n = $2"
