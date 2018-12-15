@@ -30,6 +30,7 @@ alias proto-list="sh ~/42-utilities/proto-list.sh"
 Use the `display` option to show the prototypes copied to your clipboard.
 ```bash
 proto-list <sources_folder> <number_of_tabs> [display]
+```
 
 ## Contributors
 * agissing: [GitHub](https://github.com/mathix420)
