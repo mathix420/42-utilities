@@ -20,14 +20,16 @@ mf-gen <executable_and_header_name> <sources_folder> <header_folder>
 ```
 
 ## proto-list
-Lists all function prototypes (with how many tabs you want) so you can easily add them to your header file.
+Copies all function prototypes (with how many tabs you want) to your clipboard, so you can easily add them to your header file.
 ### Alias
 An alias is added to your `shell rc` to use **proto-list** anywhere:
 ```bash
-alias proto-list="python3 ~/42-utilities/proto-list.py"
+alias proto-list="sh ~/42-utilities/proto-list.sh"
 ```
 ### Usage
-Run `proto-list` in your sources folder.
+Use the `display` option to show the prototypes copied to your clipboard.
+```bash
+proto-list <sources_folder> <number_of_tabs> [display]
 
 ## Contributors
 * agissing: [GitHub](https://github.com/mathix420)
