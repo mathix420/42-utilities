@@ -23,9 +23,8 @@ mf-gen <executable_and_header_name> <sources_folder> <header_folder>
 Copies all function prototypes (with how many tabs you want) to your clipboard, so you can easily add them to your header file.
 ### Alias
 An alias is added to your `shell rc` to use **proto-list** anywhere:
-```bash
-alias proto-list="sh ~/42-utilities/proto-list.sh"
-```
+> alias proto-list="sh ~/42-utilities/proto-list.sh"
+
 ### Usage
 Use the `display` option to show the prototypes copied to your clipboard.
 ```bash
