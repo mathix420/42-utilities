@@ -11,13 +11,8 @@
 ********************************************************************************
 
 
-# mf-gen :
-
-- Un commentaire d'escape dans le Makefile pour ne pas modifier certaines lignes
-  - Exemple :
-  	- "### ESCAPE mf-gen START"
-	- "### ESCAPE mf-gen STOP"
-
+# mf-gen:
+## Done:
 - Une option pour les librairies locales
   - Ajout en dependance ??
   - Exemple :
@@ -32,5 +27,11 @@
   - Exemple :
   	- "mf-gen push_swap srcs/push_swap inc --lib libft.libft --and checker srcs/checker inc --lib libft.libft --lib minilibx.libmlx"
 	- "mf-gen -n 2" > Prompt 1; Prompt 2
+
+## To Do:
+- Un commentaire d'escape dans le Makefile pour ne pas modifier certaines lignes
+  - Exemple :
+  	- "### ESCAPE mf-gen START"
+	- "### ESCAPE mf-gen STOP"
 
 - Une option --sumary ou -S qui peut résumer les changements apportés au Makefile
