@@ -6,7 +6,7 @@
 #    By: agissing <agissing@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/10 18:01:56 by agissing          #+#    #+#              #
-#    Updated: 2019/02/01 23:23:56 by agissing         ###   ########.fr        #
+#    Updated: 2019/02/03 10:58:56 by agissing         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,12 +62,25 @@ if (c == 0):
     for i in range(n):
         objects.append(obj())
         objects[-1].name = input('Program name : ')
-        objects[-1].dir = input("Sources directory : ")
-        objects[-1].inc = input("Headers directory : ")
+        if objects[-1].name == "" or ' ' in objects[-1].name:
+            sys.exit("\nmf-gen: '%s': Bad program name" % objects[-1].name)
+        objects[-1].dir = input("Sources directory [.]: ")
+        if objects[-1].dir == "":
+            objects[-1].dir = '.'
+        objects[-1].inc = input("Headers directory [.]: ")
+        if objects[-1].inc == "":
+            objects[-1].inc = '.'
         for l in input("Local librairies (<dirname>.<libname>) : ").split(' '):
             if l != '':
-                objects[-1].lib.append(l.split('.'))
-    print ("\nNext time you can use this command :\n\n\t$ mf-gen", ' --and '.join([('%s "%s" "%s" ' % (o.name, o.dir, o.inc)) + ' '.join(['--lib %s.%s' % (l[0], l[1]) for l in o.lib]) for o in objects]))
+                if l.count('.') == 1:
+                    objects[-1].lib.append(l.split('.'))
+                else:
+                    sys.exit("\nmf-gen: %s: Bad librairy format" % l)
+    print ("\nNext time you can use this command :\n\n\t$ mf-gen",
+           ' --and '.join([('%s "%s" "%s"' % (o.name, o.dir, o.inc))
+                           + ' '.join(['--lib %s.%s' % (l[0], l[1])
+                                       for l in o.lib])
+                           for o in objects]))
 elif (c >= 3):
     d = 0
     for i in range(1, len(sys.argv)):
@@ -116,8 +129,11 @@ for prog in objects:
     end = beautify(prog.name) + '_SRC ='
     i = objects.index(prog)
     for d in prog.dir.split(' '):
-        commande = "cd %s && ls *.c | sort | sed 's/$/ \\\/'" % d
-        files = subprocess.check_output(['bash','-c', commande]).decode()[:-2]
+        try:
+            commande = "cd %s 2> /dev/null && ls *.c 2> /dev/null | sort | sed 's/$/ \\\/'" % d
+            files = subprocess.check_output(['bash','-c', commande]).decode()[:-2]
+        except:
+            sys.exit("\nmf-gen: %s: No such file or directory" % d)
         output += "\nDIR_" + beautify(d) + str(i) + ' = ' + d + '\n'
         output += "_" + beautify(d) + str(i) + ' = ' + files + '\n'
         end += ' $(patsubst %,$(' + "DIR_" + beautify(d) + str(i)
