@@ -6,16 +6,18 @@
 #    By: agissing <agissing@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/10 18:01:56 by agissing          #+#    #+#              #
-#    Updated: 2019/02/03 10:58:56 by agissing         ###   ########.fr        #
+#    Updated: 2019/02/04 17:08:41 by agissing         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-import subprocess, time, sys, os, re
-from os import path
+import subprocess, sys, re
+from time import strftime
+from os import path, environ
 
 app_path = path.dirname(path.realpath(__file__))
 PARAMS = ['-n', '--lib', '--and', '--type']
-OPTIONS = ['-S', '--sumary']
+OPTIONS = ['-S', '--sumary', '-f']
+OPT = [0 for i in OPTIONS]
 
 objects = []
 
@@ -26,21 +28,47 @@ class obj():
         self.inc = ''
         self.lib = []
 
+def usage():
+    usage = """Usage: mf-gen [OPTIONS] [[NAME] [SRCS] [INCLUDES] [OPTIONS]]...
+
+Makefile Options:
+{0}--lib       {1}Add local library (template: <directory>.<library_name>)
+{0}--and       {1}Append new program to makefile (only in command line mode)
+
+General Options:
+{0}-S, --sumary{1}Return a Makefile summary
+{0}-h, --help  {1}Show help output
+{0}-n <int>    {1}Make multiple programs in GUI mode
+{0}-f          {1}Force writing (may cause unwanted overwriting)
+
+Command line Examples:
+{0}$ mf-gen program "srcs" "includes mine" --lib mine.lib
+{0}$ mf-gen -S prog1 src1 inc1 --and prog2 src2 inc2 --lib some.library
+
+GUI mode Examples:
+{0}$ mf-gen
+{0}$ mf-gen -fn 2
+
+Made with <3 by agissing and flklein
+GitHub page: https://github.com/mathix420/42-utilities""".format(' ' * 3, ' ' * 5)
+    sys.exit(usage)
+    
+        
 def ft_putspc(str):
     return(' ' * (40 - len(str)))
 
 def get_userinfos():
     try:
-        _mail = os.environ['MAIL']
+        _mail = environ['MAIL']
     except:
         _mail = 'marvin@42.fr'
     try:
-        _user = os.environ['USER']
+        _user = environ['USER']
     except:
         _user = 'marvin'
     return (_user, _mail)
     
-def check_args(argv):
+def check_args(argv, OPTS):
 # Return 0 for gui > 3 for command line and < 0 if errors occurs
     c = 0
     n = 1
@@ -49,16 +77,24 @@ def check_args(argv):
             if arg == '-n':
                 n = -1
             c -= 2
-        elif arg in OPTIONS:
+        elif arg[0] == '-':
+            if arg[-1] == 'n':
+                n = -1
+                c -= 1
+                arg = arg[:-1]
+            for char in arg[1:]:
+                if '-' + char in OPTIONS:
+                    OPTS[OPTIONS.index('-' + char)] = 1
+                else:
+                    usage()
             c -= 1
         elif n == -1:
             n = int(arg)
         c += 1
-    return (c, n)
+    return (c, n, OPTS)
 
-c, n = check_args(sys.argv)
-model_name = "MakeSimple"
-if (c == 0):
+c, n, OPT = check_args(sys.argv, OPT)
+if (c == 0): #GUI mode
     for i in range(n):
         objects.append(obj())
         objects[-1].name = input('Program name : ')
@@ -72,41 +108,44 @@ if (c == 0):
             objects[-1].inc = '.'
         for l in input("Local librairies (<dirname>.<libname>) : ").split(' '):
             if l != '':
-                if l.count('.') == 1:
+                if l.rstrip('.').count('.') == 1:
                     objects[-1].lib.append(l.split('.'))
                 else:
                     sys.exit("\nmf-gen: %s: Bad librairy format" % l)
     print ("\nNext time you can use this command :\n\n\t$ mf-gen",
            ' --and '.join([('%s "%s" "%s"' % (o.name, o.dir, o.inc))
-                           + ' '.join(['--lib %s.%s' % (l[0], l[1])
+                           + ''.join([' --lib %s.%s' % (l[0], l[1])
                                        for l in o.lib])
                            for o in objects]))
-elif (c >= 3):
+elif (c >= 3): #Command line mode
     d = 0
     for i in range(1, len(sys.argv)):
-        if d == 0:
+        if d == 0 and not sys.argv[i] in (OPTIONS + PARAMS):
             objects.append(obj())
             objects[-1].name = sys.argv[i]
             d += 1
-        elif d == 1:
+        elif d == 1 and not sys.argv[i] in (OPTIONS + PARAMS):
             objects[-1].dir = sys.argv[i]
             d += 1
-        elif d == 2:
+        elif d == 2 and not sys.argv[i] in (OPTIONS + PARAMS):
             objects[-1].inc = sys.argv[i]
             d += 1
         elif sys.argv[i] == "--and":
             d = 0;
         elif i > 0 and sys.argv[i - 1] == "--lib":
-            objects[-1].lib.append(sys.argv[i].split('.'))
+            if sys.argv[i].rstrip('.').count('.') == 1:
+                objects[-1].lib.append(sys.argv[i].split('.'))
+            else:
+                sys.exit("\nmf-gen: %s: Bad librairy format" % sys.argv[i])
         for i in range(4, len(sys.argv)):
             if (i + 1 < len(sys.argv) and sys.argv[i] == "--type"):
                 model_name = sys.argv[i + 1]
 else:
-    sys.exit("Bad arguments !")
+    usage()
 
 def header_42():
     user, mail = get_userinfos()
-    date = time.strftime('%Y/%m/%d %X') + ' by ' + user
+    date = strftime('%Y/%m/%d %X') + ' by ' + user
     header_template = open(path.join(app_path, 'header_42'), 'r')
     return (header_template.read().format(user, mail, ft_putspc(user + mail),
                                           date, ft_putspc(date)))
