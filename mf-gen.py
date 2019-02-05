@@ -6,7 +6,7 @@
 #    By: agissing <agissing@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/10 18:01:56 by agissing          #+#    #+#              #
-#    Updated: 2019/02/04 17:08:41 by agissing         ###   ########.fr        #
+#    Updated: 2019/02/05 17:18:02 by agissing         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,9 @@ from os import path, environ
 
 app_path = path.dirname(path.realpath(__file__))
 PARAMS = ['-n', '--lib', '--and', '--type']
-OPTIONS = ['-S', '--sumary', '-f']
+OPTIONS = ['-v', '--verbose', '-f']
+LIBS = []
+ESCAPE = []
 OPT = [0 for i in OPTIONS]
 
 objects = []
@@ -32,14 +34,14 @@ def usage():
     usage = """Usage: mf-gen [OPTIONS] [[NAME] [SRCS] [INCLUDES] [OPTIONS]]...
 
 Makefile Options:
-{0}--lib       {1}Add local library (template: <directory>.<library_name>)
-{0}--and       {1}Append new program to makefile (only in command line mode)
+{0}--lib        {1}Add local library (template: <directory>.<library_name>)
+{0}--and        {1}Append new program to makefile (only in command line mode)
 
 General Options:
-{0}-S, --sumary{1}Return a Makefile summary
-{0}-h, --help  {1}Show help output
-{0}-n <int>    {1}Make multiple programs in GUI mode
-{0}-f          {1}Force writing (may cause unwanted overwriting)
+{0}-v, --verbose{1}Verbose the Makefile output
+{0}-h, --help   {1}Show help output
+{0}-n <int>     {1}Make multiple programs in GUI mode
+{0}-f           {1}Force writing (may cause unwanted overwriting)
 
 Command line Examples:
 {0}$ mf-gen program "srcs" "includes mine" --lib mine.lib
@@ -73,11 +75,19 @@ def check_args(argv, OPTS):
     c = 0
     n = 1
     for arg in argv[1:]:
+        if arg == '-':
+            usage()
         if arg in PARAMS:
+            ESCAPE.append(arg)
             if arg == '-n':
                 n = -1
             c -= 2
         elif arg[0] == '-':
+            ESCAPE.append(arg)
+            if arg[1] == '-' and arg in OPTIONS:
+                OPTS[OPTIONS.index(arg)] = 1
+            elif arg[1] == '-':
+                usage()
             if arg[-1] == 'n':
                 n = -1
                 c -= 1
@@ -89,6 +99,7 @@ def check_args(argv, OPTS):
                     usage()
             c -= 1
         elif n == -1:
+            ESCAPE.append(arg)
             n = int(arg)
         c += 1
     return (c, n, OPTS)
@@ -120,14 +131,14 @@ if (c == 0): #GUI mode
 elif (c >= 3): #Command line mode
     d = 0
     for i in range(1, len(sys.argv)):
-        if d == 0 and not sys.argv[i] in (OPTIONS + PARAMS):
+        if d == 0 and not sys.argv[i] in ESCAPE:
             objects.append(obj())
             objects[-1].name = sys.argv[i]
             d += 1
-        elif d == 1 and not sys.argv[i] in (OPTIONS + PARAMS):
+        elif d == 1 and not sys.argv[i] in ESCAPE:
             objects[-1].dir = sys.argv[i]
             d += 1
-        elif d == 2 and not sys.argv[i] in (OPTIONS + PARAMS):
+        elif d == 2 and not sys.argv[i] in ESCAPE:
             objects[-1].inc = sys.argv[i]
             d += 1
         elif sys.argv[i] == "--and":
@@ -149,8 +160,6 @@ def header_42():
     header_template = open(path.join(app_path, 'header_42'), 'r')
     return (header_template.read().format(user, mail, ft_putspc(user + mail),
                                           date, ft_putspc(date)))
-
-makefile = open('Makefile', 'w+')
 
 output = header_42() + '''
 ################################################################################
@@ -180,6 +189,12 @@ for prog in objects:
     output += end + '\n'
     output += '\n{0}_OBJ = $({0}_SRC:.c=.o)\n'.format(beautify(prog.name))
 
+for prog in objects:
+    for lib in prog.lib:
+        if not lib in LIBS:
+            LIBS.append(lib)
+            output += beautify(lib[1]) + ' = ' + path.join(lib[0], lib[1]) + '.a\n'
+
 output += '''
 ################################################################################
 #####                           COMPILER OPTIONS                           #####
@@ -192,7 +207,7 @@ FLAGS = -Wall -Wextra -Werror
 #####                            MAKEFILE RULES                            #####
 ################################################################################
 
-.PHONY: all clean fclean re
+.PHONY : all clean fclean re
 
 all :'''
 
@@ -201,22 +216,51 @@ for o in objects:
 
 output += '\n\n'
 
+#Librairies rules
+for lib in LIBS:
+    output += '$(%s) :\n' % beautify(lib[1])
+    output += '\t%smake -C %s\n\n' % ('' if (OPT[0] or OPT[1]) else '@', lib[0])
+
 for prog in objects:
+    #Objects rules
     output += '$({0}_OBJ) : %.o : %.c\n'.format(beautify(prog.name))
-    output += '\t@$(CC) $(FLAGS) -c $< -o $@ '
-    output += ' '.join(['-I %s' % n for n in prog.inc.split(' ')]) + '\n\n'
-    output += '$({0}) : $({0}_OBJ)\n\t@$(CC) $(FLAGS) $({0}_OBJ) -o $@ '.format(beautify(prog.name))
-    output += ' '.join(['-I %s' % n for n in prog.inc.split(' ')]) + ' '
+    output += '\t%s$(CC) $(FLAGS) -c $< -o $@ ' % ('' if (OPT[0] or OPT[1]) else '@')
+    output += ' '.join(['-I%s' % n for n in prog.inc.split(' ')]) + '\n\n'
+    #Program rule
+    output += '$({0}) : $({0}_OBJ) {1}\n'.format(beautify(prog.name), ' '.join('$(%s)' % beautify(v[0]) for v in prog.lib))
+    output += '\t{1}$(CC) $(FLAGS) $({0}_OBJ) -o $@ '.format(beautify(prog.name), '' if (OPT[0] or OPT[1]) else '@')
+    output += ' '.join(['-I%s' % n for n in prog.inc.split(' ')]) + ' '
     if len(prog.lib) > 0:
         output += ' '.join(['-L%s -l%s' % (v[0], v[1].lstrip('lib')) for v in prog.lib])
     output += '\n\n'
-output += 'clean :\n\t@/bin/rm -f '
+#clean
+output += 'clean :\n\t%s/bin/rm -f ' % ('' if (OPT[0] or OPT[1]) else '@')
 output += ' '.join(['$(%s_OBJ)' % beautify(o.name) for o in objects]) + '\n\n'
-output += 'fclean : clean\n\t@/bin/rm -f '
+#fclean
+output += 'fclean : clean\n\t%s/bin/rm -f ' % ('' if (OPT[0] or OPT[1]) else '@')
 output += ' '.join(['$(%s)' % beautify(o.name) for o in objects]) + '\n\n'
+#re
 output += 're : fclean all\n'
+
+#Writing
+if (not OPT[2]) and path.isfile('Makefile'):
+    makefile = open('Makefile', 'r')
+    content = makefile.read()
+    get = 'q'
+    if content[924:939] == 'MF-GEN MAKEFILE':
+        while not get.lower() in ['y', '', 'n']:
+            get = input("mf-gen Makefile already exist, would-you overwrite it [Y/n]: ")
+        if get.lower() == 'n':
+            exit("Abort.")
+    else:
+        while not get.lower() in ['y', '', 'n']:
+            get = input("Makefile already exist, would-you overwrite it [Y/n]: ")
+        if get.lower() == "n":
+            exit("Abort.")
+    makefile.close()
+
+makefile = open('Makefile', 'w+')
 
 makefile.write(output)
 
-if (c == 1):
-    print ("All done !")
+makefile.close()
