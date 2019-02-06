@@ -32,15 +32,15 @@ proto-list <sources_folder> <number_of_tabs> [display]
 ```
 
 ## Auto-updater
-Auto-update 42-utilities when necessary, check for updates only once a day, and only takes one second to check.
+Updates **42-utilities** when necessary. Checks for updates only once a day. Takes about one second to do so.
 ### Alias
-This command is prepend to all aliases:
+This command is prepended to all aliases:
 > /bin/sh ~/42-utilities/update.sh
 
-### How it works ?
-- At launch, the program check if the date store in the file `/tmp/.42_utilities_date` is different from current date.
-- If it is the program will now check if this file `https://raw.githubusercontent.com/mathix420/42-utilities/master/sum` is different from this file `~/42-utilities/sum`.
-- And if it is also different, the program perform a `git pull` in the **42-utilities** directory.
+### How does it work?
+- Checks if the date stored in `/tmp/.42_utilities_date` is different from the current date.
+- If so, checks if `https://raw.githubusercontent.com/mathix420/42-utilities/master/sum` is different from `~/42-utilities/sum`.
+- Again, if so, performs a `git pull` in the **42-utilities** directory.
 
 ## Contributors
 * agissing: [GitHub](https://github.com/mathix420)
